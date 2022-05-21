@@ -79,7 +79,22 @@ exports.addTransaction = asyncHandler(async (req, res, next) => {
   sendTokenResponse(transaction, 200, res);
 });
 // -----------------------------------------------------------------------------------------
+//-------------------------        VIEW ALL TRANSACTIONS      ------------------------------
 
+exports.viewTransaction = asyncHandler(async (req, res, next) => {
+  // setTimeout(async () => {
+  console.log("View Transactions Function")
+  // console.log(req.user.id)
+  const getTransaction = await Transaction.find({ userId: req.user.id })
+  // console.log(getTransaction)
+  res.status(200).json({
+    success: true,
+    message: "Success",
+    data: getTransaction,
+  });
+  // }, 300);
+});
+// ----------------------------------------------------------------------------------
 
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
