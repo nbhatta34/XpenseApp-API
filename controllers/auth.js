@@ -60,6 +60,25 @@ exports.login = asyncHandler(async (req, res, next) => {
 
 // ------------------------------------------------------------------------------------------------------
 
+// ---------------------------        ADD TRANSACTION        ------------------------------
+
+exports.addTransaction = asyncHandler(async (req, res, next) => {
+  // console.log("Add Transaction Function")
+  // console.log(req.body)
+  const { itemName, quantity, unitPrice, category, clientName } = req.body;
+  const userId = req.user.id;
+  const transaction = await Transaction.create({
+    itemName,
+    quantity,
+    unitPrice,
+    category,
+    clientName,
+    userId,
+  });
+
+  sendTokenResponse(transaction, 200, res);
+});
+// -----------------------------------------------------------------------------------------
 
 
 // Get token from model , create cookie and send response
