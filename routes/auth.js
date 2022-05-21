@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const app = express();
 
-const { register, login, addTransaction, viewTransaction, deleteTransaction } = require("../controllers/auth");
+const { register, login, addTransaction, viewTransaction, deleteTransaction, updateTransaction } = require("../controllers/auth");
 
 const { protect } = require("../middleware/auth");
 router
@@ -18,7 +18,9 @@ router
 
 router
     .route("/updateTransaction/:transactionId")
+    .put(protect, updateTransaction)
     .delete(protect, deleteTransaction)
+
 
 
 

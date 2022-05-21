@@ -97,7 +97,6 @@ exports.viewTransaction = asyncHandler(async (req, res, next) => {
 // ----------------------------------------------------------------------------------
 // +++++++++++++++++++++++++++++++     DELETING TRANSACTION   ++++++++++++++++++++++++++++
 
-
 exports.deleteTransaction = asyncHandler(async (req, res, next) => {
   // console.log("User Profile Data Reached in Delete Transaction Backend Function");
   const transactionId = req.params.transactionId;
@@ -116,31 +115,57 @@ exports.deleteTransaction = asyncHandler(async (req, res, next) => {
 
 });
 
+// --------------------------------------------------------------------------------------------
+
+// +++++++++++++++++++++++++++++++     UPDATING TRANSACTION   ++++++++++++++++++++++++++++
+
+
+exports.updateTransaction = asyncHandler(async (req, res, next) => {
+  // console.log("User Profile Data Reached in Update Transaction Backend Function");
+  const transactionId = req.params.transactionId;
+  console.log(transactionId);
+
+  const data = req.body;
+  const ifTransactionExists = await Transaction.findOne({ _id: transactionId })
+
+  if (!ifTransactionExists) {
+    return res.json("Transaction ID doesn't exist");
+  }
+  const transaction = await Transaction.findByIdAndUpdate(transactionId, data);
+  // console.log("Transaction Data");
+  // console.log(transaction);
+  return res.json(transaction);
+
+
+});
+
+// ----------------------------------------------------------------------------------------
+
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
 
-    const token = user.getSignedJwtToken();
-  
-    const options = {
-      //Cookie will expire in 30 days
-      expires: new Date(
-        Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
-      ),
-      httpOnly: true,
-    };
-  
-    // Cookie security is false .if you want https then use this code. do not use in development time
-    if (process.env.NODE_ENV === "proc") {
-      options.secure = true;
-    }
-  
-    //we have created a cookie with a token
-    res
-      .status(statusCode)
-      .cookie("token", token, options)
-      .json({
-        success: true,
-        token,
-      });
-  
+  const token = user.getSignedJwtToken();
+
+  const options = {
+    //Cookie will expire in 30 days
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
   };
+
+  // Cookie security is false .if you want https then use this code. do not use in development time
+  if (process.env.NODE_ENV === "proc") {
+    options.secure = true;
+  }
+
+  //we have created a cookie with a token
+  res
+    .status(statusCode)
+    .cookie("token", token, options)
+    .json({
+      success: true,
+      token,
+    });
+
+};
