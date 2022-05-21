@@ -22,6 +22,46 @@ exports.register = asyncHandler(async (req, res, next) => {
 
 
 
+//-------------------          LOGIN USER        ---------------------------------------
+
+exports.login = asyncHandler(async (req, res, next) => {
+  // console.log("Login User Function")
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return next(new ErrorResponse("Please provide email and password"), 400);
+  }
+
+  // Check user
+  const user = await User.findOne({ email: email }).select("+password");
+
+  if (!user) {
+    res
+      .status(201)
+      .json({
+        success: false,
+        message: 'Invalid credentials user',
+      });
+  }
+
+  if (user.password != password) {
+    res
+      .status(201)
+      .json({
+        success: false,
+        message: 'Invalid credentials',
+      });
+  }
+  else {
+    sendTokenResponse(user, 200, res);
+  }
+});
+
+
+// ------------------------------------------------------------------------------------------------------
+
+
+
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
 
