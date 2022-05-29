@@ -160,6 +160,22 @@ exports.addStock = asyncHandler(async (req, res, next) => {
 
 //----------------------------------------------------------------------------------------
 
+//-------------------------        VIEW ALL STOCKS      ------------------------------
+
+exports.viewStock = asyncHandler(async (req, res, next) => {
+  setTimeout(async () => {
+    console.log("View Stocks Function")
+    // console.log(req.user.id)
+    const getStock = await Stock.find({ userId: req.user.id })
+    // console.log(getTransaction)
+    res.status(200).json({
+      success: true,
+      message: "Success",
+      data: getStock,
+    });
+  }, 100);
+});
+//------------------------------------------------------------------------------------------
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
 

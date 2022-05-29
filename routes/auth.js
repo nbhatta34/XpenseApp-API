@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const app = express();
 
-const { register, login, addTransaction, viewTransaction, deleteTransaction, updateTransaction, addStock } = require("../controllers/auth");
+const { register, login, addTransaction, viewTransaction, deleteTransaction, updateTransaction, addStock, viewStock } = require("../controllers/auth");
 
 const { protect } = require("../middleware/auth");
 router
@@ -24,6 +24,7 @@ router
 router
     .route("/addStock")
     .post(protect, addStock)
+    .get(protect, viewStock)
 
 
 module.exports = router;
