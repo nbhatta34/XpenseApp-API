@@ -141,6 +141,25 @@ exports.updateTransaction = asyncHandler(async (req, res, next) => {
 
 // ----------------------------------------------------------------------------------------
 
+//------------------------------Add Stock -----------------------------------------
+exports.addStock = asyncHandler(async (req, res, next) => {
+  console.log("Add stock Function")
+  // console.log(req.body)
+  const { stockName, quantity, unitPrice, category, supplierName } = req.body;
+  const userId = req.user.id;
+  const stock = await Stock.create({
+    stockName,
+    quantity,
+    unitPrice,
+    category,
+    supplierName,
+    userId,
+  });
+  sendTokenResponse(stock, 200, res);
+});
+
+//----------------------------------------------------------------------------------------
+
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
 
