@@ -176,6 +176,27 @@ exports.viewStock = asyncHandler(async (req, res, next) => {
   }, 100);
 });
 //------------------------------------------------------------------------------------------
+// +++++++++++++++++++++++++++++++     UPDATING STOCKS   ++++++++++++++++++++++++++++
+
+
+exports.updateStock = asyncHandler(async (req, res, next) => {
+  
+  const stockId = req.params.stockId;
+  console.log(stockId);
+
+  const data = req.body;
+  const ifStockExists = await Stock.findOne({ _id: stockId })
+
+  if (!ifStockExists) {
+    return res.json("Stock ID doesn't exist");
+  }
+  const stock = await Stock.findByIdAndUpdate(stockId, data);
+  
+  return res.json(stock);
+
+
+});
+//---------------------------------------------------------------------------------------------
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
 
