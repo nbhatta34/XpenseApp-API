@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const app = express();
 
-const { register, login, addTransaction, viewTransaction, deleteTransaction, updateTransaction, addStock, viewStock, updateStock } = require("../controllers/auth");
+const { register, login, addTransaction, viewTransaction, deleteTransaction, updateTransaction, addStock, viewStock, updateStock, deleteStock, logout } = require("../controllers/auth");
 
 const { protect } = require("../middleware/auth");
 router
@@ -29,6 +29,9 @@ router
 router
     .route("/updateStock/:stockId")
     .put(protect, updateStock)
+    .delete(protect, deleteStock)
+
+router.post("/logout", logout)
 
 
 module.exports = router;

@@ -197,6 +197,41 @@ exports.updateStock = asyncHandler(async (req, res, next) => {
 
 });
 //---------------------------------------------------------------------------------------------
+// +++++++++++++++++++++++++++++++     DELETING STOCK   ++++++++++++++++++++++++++++
+
+
+exports.deleteStock = asyncHandler(async (req, res, next) => {
+  // console.log("User Profile Data Reached in Delete Transaction Backend Function");
+  const stockId = req.params.stockId;
+  // console.log(transactionId);
+
+  const ifStockExists = await Stock.findOne({ _id: stockId })
+
+  if (!ifStockExists) {
+    return res.json("Stock ID doesn't exist");
+  }
+  const stock = await Stock.findByIdAndDelete(stockId);
+  // console.log("Transaction Data");
+  // console.log(transaction);
+  return res.json(stock);
+
+
+});
+// ---------------------------------------------------------------------------------------
+//------------------                  LOGOUT USER           ---------------------------------
+
+exports.logout = asyncHandler(async (req, res, next) => {
+  res.cookie("token", "none", {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    data: "User Logged out",
+  });
+});
+// --------------------------------------------------------------------------------------------------
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
 
@@ -223,5 +258,7 @@ const sendTokenResponse = (user, statusCode, res) => {
       success: true,
       token,
     });
+
+
 
 };
