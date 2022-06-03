@@ -28,7 +28,29 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  
+  address: {
+    type: String,
+    default: "Add Address"
+  },
+  mobile: {
+    type: String,
+    maxlength: 10,
+    minlength: 10,
+    default: "Add Number"
+  },
+  pan_vat_no: {
+    type: String,
+    default: "Add PAN/VAT No."
+  },
+  businessName: {
+    type: String,
+    default: "Add Business Name"
+  },
+  picture: {
+    type: String,
+    default: "xpense1.png"
+  }
+
 });
 
 UserSchema.methods.getSignedJwtToken = function () {

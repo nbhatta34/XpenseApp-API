@@ -248,6 +248,76 @@ exports.getMe = asyncHandler(async (req, res, next) => {
   // }, 700);
 });
 //-----------------------------------------------------------------------------------------------------
+
+// +++++++++++++++++++++++++++++++     UPDATING USER PROFILE   ++++++++++++++++++++++++++++
+exports.updateProfile = asyncHandler(async (req, res, next) => {
+  console.log("User Profile Data Reached in Update Profile Backend Function");
+  const loggedInUserID = req.user.id;
+  console.log(loggedInUserID);
+  const data = req.body;
+  const ifUserExists = await User.findOne({ _id: loggedInUserID })
+
+  if (!ifUserExists) {
+    return res.json("User ID doesn't exist");
+  }
+  const user = await User.findByIdAndUpdate(loggedInUserID, data);
+  console.log("User Profile Data");
+  console.log(user);
+  return res.json(user);
+});
+
+//------------------------------------------------------------------------------------------------------
+
+// +++++++++++++++++++++++++++++++     UPDATING USER PICTURE   ++++++++++++++++++++++
+exports.uploadImage = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  console.log(req.params.id)
+  console.log(req.files)
+  if (!user) {
+    return next(new ErrorResponse(`No user found with ${req.params.id}`), 404);
+  }
+
+  if (!req.files) {
+    return next(new ErrorResponse(`Please upload a file`, 400));
+  }
+
+  const file = req.files.file;
+
+  // Check file size
+  if (file.size > process.env.MAX_FILE_UPLOAD) {
+    console.log("file thulo vayo hajur")
+    return next(
+      new ErrorResponse(
+        `Please upload an image less than ${process.env.MAX_FILE_UPLOAD}`,
+        400
+      )
+    );
+  }
+
+  filename = `photo_${user.id}${file.name}`;
+
+  file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async (err) => {
+    if (err) {
+      return next(new ErrorResponse(`Problem with file upload`, 500));
+    }
+
+    //insert the filename into database
+    await User.findByIdAndUpdate(req.params.id, {
+
+      picture: file.name,
+
+    });
+    console.log("image upload vayo hajur")
+  });
+
+  res.status(200).json({
+    success: true,
+    data: file.name,
+  });
+});
+
+//---------------------------------------------------------------------------------------------------
+
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
 
