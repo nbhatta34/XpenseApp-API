@@ -218,6 +218,7 @@ exports.deleteStock = asyncHandler(async (req, res, next) => {
 
 });
 // ---------------------------------------------------------------------------------------
+
 //------------------                  LOGOUT USER           ---------------------------------
 
 exports.logout = asyncHandler(async (req, res, next) => {
@@ -232,6 +233,21 @@ exports.logout = asyncHandler(async (req, res, next) => {
   });
 });
 // --------------------------------------------------------------------------------------------------
+//-------------------------        CURRENT USER DETAILS      ------------------------------
+
+exports.getMe = asyncHandler(async (req, res, next) => {
+  // setTimeout(async () => {
+  console.log(req.user.id)
+  const user = await User.findById(req.user.id);
+  console.log(user)
+  res.status(200).json({
+    success: true,
+    message: "Success",
+    data: user,
+  });
+  // }, 700);
+});
+//-----------------------------------------------------------------------------------------------------
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
 
