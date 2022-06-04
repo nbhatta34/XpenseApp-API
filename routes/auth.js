@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const app = express();
 
-const { register, getMe, login, addTransaction, viewTransaction, deleteTransaction, updateTransaction, addStock, viewStock, updateStock, deleteStock, logout, updateProfile, uploadImage, addCategory, viewCategory, uploadThumbnail } = require("../controllers/auth");
+const { register, getMe, login, addTransaction, viewTransaction, deleteTransaction, updateTransaction, addStock, viewStock, updateStock, deleteStock, logout, updateProfile, uploadImage, addCategory, viewCategory, uploadThumbnail, addClientInformation, viewClientInformation } = require("../controllers/auth");
 
 const { protect } = require("../middleware/auth");
 router
@@ -50,6 +50,11 @@ router
 router
     .route("/:id/:catName/photo")
     .post(protect, uploadThumbnail);
+
+router
+    .route("/addClientInformation")
+    .post(protect, addClientInformation)
+    .get(protect, viewClientInformation)
 
 
 

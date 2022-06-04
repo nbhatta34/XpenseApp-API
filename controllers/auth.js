@@ -398,6 +398,38 @@ exports.uploadThumbnail = asyncHandler(async (req, res, next) => {
   });
 });
 // ------------------------------------------------------------------------------------
+//-----------------------Add Client Information -----------------------------------------
+exports.addClientInformation = asyncHandler(async (req, res, next) => {
+  console.log("Add Client Function")
+  console.log(req.body)
+  const { clientName, mobile, address, email } = req.body;
+  const userId = req.user.id;
+  const client = await Client.create({
+    clientName,
+    mobile,
+    address,
+    email,
+    userId,
+  });
+  sendTokenResponse(client, 200, res);
+});
+
+//-------------------------        VIEW CLIENT INFORMATION      ------------------------------
+
+exports.viewClientInformation = asyncHandler(async (req, res, next) => {
+  // setTimeout(async () => {
+  console.log("View Client Function")
+  // console.log(req.user.id)
+  const getClientInformation = await Client.find({ userId: req.user.id })
+  // console.log(getTransaction)
+  res.status(200).json({
+    success: true,
+    message: "Success",
+    data: getClientInformation,
+  });
+  // }, 300);
+});
+// ----------------------------------------------------------------------------------
 
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
