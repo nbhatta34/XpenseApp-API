@@ -138,7 +138,20 @@ exports.updateTransaction = asyncHandler(async (req, res, next) => {
 
 
 });
+exports.homepage = asyncHandler(async (req, res, next) => {
+  // const categoryId = req.params.categoryId;
 
+
+  // const ifCategoryExists = await Category.findOne({ _id: categoryId })
+
+  // if (!ifCategoryExists) {
+  //   return res.json("Category ID doesn't exist");
+  // }
+  // const category = await Category.findByIdAndDelete(categoryId);
+
+  return res.json("Welcome To Homepage");
+});
+// ----------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 
 // Get token from model , create cookie and send response

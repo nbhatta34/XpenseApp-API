@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const app = express();
 
-const { register, login, addTransaction, viewTransaction, deleteTransaction, updateTransaction } = require("../controllers/auth");
+const { register, login, addTransaction, viewTransaction, deleteTransaction, updateTransaction, homepage } = require("../controllers/auth");
 
 const { protect } = require("../middleware/auth");
 router
@@ -22,6 +22,7 @@ router
     .delete(protect, deleteTransaction)
 
 
-
+    router.route("/home")
+    .get(homepage)
 
 module.exports = router;
