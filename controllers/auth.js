@@ -154,6 +154,296 @@ exports.homepage = asyncHandler(async (req, res, next) => {
 // ----------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 
+//------------------------------Add Stock -----------------------------------------
+exports.addStock = asyncHandler(async (req, res, next) => {
+  console.log("Add stock Function")
+  // console.log(req.body)
+  const { stockName, quantity, unitPrice, category, supplierName } = req.body;
+  const userId = req.user.id;
+  const stock = await Stock.create({
+    stockName,
+    quantity,
+    unitPrice,
+    category,
+    supplierName,
+    userId,
+  });
+  sendTokenResponse(stock, 200, res);
+});
+
+//----------------------------------------------------------------------------------------
+
+//-------------------------        VIEW ALL STOCKS      ------------------------------
+
+exports.viewStock = asyncHandler(async (req, res, next) => {
+  setTimeout(async () => {
+    console.log("View Stocks Function")
+    // console.log(req.user.id)
+    const getStock = await Stock.find({ userId: req.user.id })
+    // console.log(getTransaction)
+    res.status(200).json({
+      success: true,
+      message: "Success",
+      data: getStock,
+    });
+  }, 100);
+});
+//------------------------------------------------------------------------------------------
+// +++++++++++++++++++++++++++++++     UPDATING STOCKS   ++++++++++++++++++++++++++++
+
+
+exports.updateStock = asyncHandler(async (req, res, next) => {
+
+  const stockId = req.params.stockId;
+  console.log(stockId);
+
+  const data = req.body;
+  const ifStockExists = await Stock.findOne({ _id: stockId })
+
+  if (!ifStockExists) {
+    return res.json("Stock ID doesn't exist");
+  }
+  const stock = await Stock.findByIdAndUpdate(stockId, data);
+
+  return res.json(stock);
+
+
+});
+//---------------------------------------------------------------------------------------------
+// +++++++++++++++++++++++++++++++     DELETING STOCK   ++++++++++++++++++++++++++++
+
+
+exports.deleteStock = asyncHandler(async (req, res, next) => {
+  // console.log("User Profile Data Reached in Delete Transaction Backend Function");
+  const stockId = req.params.stockId;
+  // console.log(transactionId);
+
+  const ifStockExists = await Stock.findOne({ _id: stockId })
+
+  if (!ifStockExists) {
+    return res.json("Stock ID doesn't exist");
+  }
+  const stock = await Stock.findByIdAndDelete(stockId);
+  // console.log("Transaction Data");
+  // console.log(transaction);
+  return res.json(stock);
+
+
+});
+// ---------------------------------------------------------------------------------------
+
+//------------------                  LOGOUT USER           ---------------------------------
+
+exports.logout = asyncHandler(async (req, res, next) => {
+  res.cookie("token", "none", {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    data: "User Logged out",
+  });
+});
+// --------------------------------------------------------------------------------------------------
+//-------------------------        CURRENT USER DETAILS      ------------------------------
+
+exports.getMe = asyncHandler(async (req, res, next) => {
+  // setTimeout(async () => {
+  console.log(req.user.id)
+  const user = await User.findById(req.user.id);
+  console.log(user)
+  res.status(200).json({
+    success: true,
+    message: "Success",
+    data: user,
+  });
+  // }, 700);
+});
+//-----------------------------------------------------------------------------------------------------
+
+// +++++++++++++++++++++++++++++++     UPDATING USER PROFILE   ++++++++++++++++++++++++++++
+exports.updateProfile = asyncHandler(async (req, res, next) => {
+  console.log("User Profile Data Reached in Update Profile Backend Function");
+  const loggedInUserID = req.user.id;
+  console.log(loggedInUserID);
+  const data = req.body;
+  const ifUserExists = await User.findOne({ _id: loggedInUserID })
+
+  if (!ifUserExists) {
+    return res.json("User ID doesn't exist");
+  }
+  const user = await User.findByIdAndUpdate(loggedInUserID, data);
+  console.log("User Profile Data");
+  console.log(user);
+  return res.json(user);
+});
+
+//------------------------------------------------------------------------------------------------------
+
+// +++++++++++++++++++++++++++++++     UPDATING USER PICTURE   ++++++++++++++++++++++
+exports.uploadImage = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  console.log(req.params.id)
+  console.log(req.files)
+  if (!user) {
+    return next(new ErrorResponse(`No user found with ${req.params.id}`), 404);
+  }
+
+  if (!req.files) {
+    return next(new ErrorResponse(`Please upload a file`, 400));
+  }
+
+  const file = req.files.file;
+
+  // Check file size
+  if (file.size > process.env.MAX_FILE_UPLOAD) {
+    console.log("file thulo vayo hajur")
+    return next(
+      new ErrorResponse(
+        `Please upload an image less than ${process.env.MAX_FILE_UPLOAD}`,
+        400
+      )
+    );
+  }
+
+  filename = `photo_${user.id}${file.name}`;
+
+  file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async (err) => {
+    if (err) {
+      return next(new ErrorResponse(`Problem with file upload`, 500));
+    }
+
+    //insert the filename into database
+    await User.findByIdAndUpdate(req.params.id, {
+
+      picture: file.name,
+
+    });
+    console.log("image upload vayo hajur")
+  });
+
+  res.status(200).json({
+    success: true,
+    data: file.name,
+  });
+});
+
+//---------------------------------------------------------------------------------------------------
+//-----------------------Add Category -----------------------------------------
+exports.addCategory = asyncHandler(async (req, res, next) => {
+  console.log("Add Category Function")
+  console.log(req.body)
+  console.log(req.user.id)
+  const { categoryName } = req.body;
+  const userId = req.user.id;
+  const category = await Category.create({
+    categoryName,
+    userId,
+  });
+  // console.log(category)
+  return res.json({ category, status: "200" });
+});
+// ----------------------------------------------------------------------------------
+
+//-------------------------        VIEW CATEGORY      ------------------------------
+
+exports.viewCategory = asyncHandler(async (req, res, next) => {
+  // setTimeout(async () => {
+  console.log("View Category Function")
+  // console.log(req.user.id)
+  const getCategory = await Category.find({ userId: req.user.id })
+  // console.log(getTransaction)
+  res.status(200).json({
+    success: true,
+    message: "Success",
+    data: getCategory,
+  });
+  // }, 300);
+});
+// ----------------------------------------------------------------------------------
+
+// +++++++++++++++++++++++++++++++     UPLOADING CATEGORY THUMBNAIL PICTURE   ++++++++++++++++++++++
+exports.uploadThumbnail = asyncHandler(async (req, res, next) => {
+  console.log("Upload Thumbnail")
+  console.log(req.params.catName)
+
+
+  if (!req.files) {
+    return next(new ErrorResponse(`Please upload a file`, 400));
+  }
+
+  const file = req.files.file;
+
+  const userId = req.user.id;
+
+  // Check file size
+  if (file.size > process.env.MAX_FILE_UPLOAD) {
+    console.log("file thulo vayo hajur")
+    return next(
+      new ErrorResponse(
+        `Please upload an image less than ${process.env.MAX_FILE_UPLOAD}`,
+        400
+      )
+    );
+  }
+
+  filename = `${req.params.catName}_${req.user.id}.png`;
+  console.log(filename);
+
+  file.mv(`${process.env.FILE_UPLOAD_PATH}/${filename}`, async (err) => {
+    if (err) {
+      return next(new ErrorResponse(`Problem with file upload`, 500));
+    }
+
+    //insert the filename into database
+    await Category.findByIdAndUpdate(req.params.id, {
+
+      picture: filename,
+
+    });
+    console.log("image upload vayo hajur")
+  });
+
+  res.status(200).json({
+    success: true,
+    data: file.name,
+  });
+});
+// ------------------------------------------------------------------------------------
+//-----------------------Add Client Information -----------------------------------------
+exports.addClientInformation = asyncHandler(async (req, res, next) => {
+  console.log("Add Client Function")
+  console.log(req.body)
+  const { clientName, mobile, address, email } = req.body;
+  const userId = req.user.id;
+  const client = await Client.create({
+    clientName,
+    mobile,
+    address,
+    email,
+    userId,
+  });
+  sendTokenResponse(client, 200, res);
+});
+
+//-------------------------        VIEW CLIENT INFORMATION      ------------------------------
+
+exports.viewClientInformation = asyncHandler(async (req, res, next) => {
+  // setTimeout(async () => {
+  console.log("View Client Function")
+  // console.log(req.user.id)
+  const getClientInformation = await Client.find({ userId: req.user.id })
+  // console.log(getTransaction)
+  res.status(200).json({
+    success: true,
+    message: "Success",
+    data: getClientInformation,
+  });
+  // }, 300);
+});
+// ----------------------------------------------------------------------------------
+
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
 
@@ -180,5 +470,9 @@ const sendTokenResponse = (user, statusCode, res) => {
       success: true,
       token,
     });
+
+
+
+
 
 };
