@@ -449,6 +449,23 @@ exports.deleteClientInformation = asyncHandler(async (req, res, next) => {
   const client = await Client.findByIdAndDelete(clientId);
 
   return res.json(client);
+
+})
+
+//-------------------------        DELETE CATEGORY      ------------------------------
+
+exports.deleteCategory = asyncHandler(async (req, res, next) => {
+  const categoryId = req.params.categoryId;
+
+
+  const ifCategoryExists = await Category.findOne({ _id: categoryId })
+
+  if (!ifCategoryExists) {
+    return res.json("Category ID doesn't exist");
+  }
+  const category = await Category.findByIdAndDelete(categoryId);
+
+  return res.json(category);
 });
 // ----------------------------------------------------------------------------------
 

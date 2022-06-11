@@ -59,6 +59,11 @@ router
 router
     .route("/deleteClientInformation/:clientId")
     .delete(deleteClientInformation)
+    
+router
+    .route("/deleteCategory/:categoryId")
+    .delete(deleteCategory)
+
 
 router.route("/home")
     .get(homepage)
