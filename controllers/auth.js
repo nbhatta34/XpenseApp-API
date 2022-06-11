@@ -349,17 +349,13 @@ exports.addCategory = asyncHandler(async (req, res, next) => {
 //-------------------------        VIEW CATEGORY      ------------------------------
 
 exports.viewCategory = asyncHandler(async (req, res, next) => {
-  // setTimeout(async () => {
   console.log("View Category Function")
-  // console.log(req.user.id)
   const getCategory = await Category.find({ userId: req.user.id })
-  // console.log(getTransaction)
   res.status(200).json({
     success: true,
     message: "Success",
     data: getCategory,
   });
-  // }, 300);
 });
 // ----------------------------------------------------------------------------------
 
