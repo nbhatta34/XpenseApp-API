@@ -439,6 +439,22 @@ exports.viewClientInformation = asyncHandler(async (req, res, next) => {
   });
 });
 // ----------------------------------------------------------------------------------
+//-------------------------        DELETE CATEGORY      ------------------------------
+
+exports.deleteCategory = asyncHandler(async (req, res, next) => {
+  const categoryId = req.params.categoryId;
+
+
+  const ifCategoryExists = await Category.findOne({ _id: categoryId })
+
+  if (!ifCategoryExists) {
+    return res.json("Category ID doesn't exist");
+  }
+  const category = await Category.findByIdAndDelete(categoryId);
+
+  return res.json(category);
+});
+// ----------------------------------------------------------------------------------
 
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
