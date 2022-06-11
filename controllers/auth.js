@@ -430,17 +430,13 @@ exports.addClientInformation = asyncHandler(async (req, res, next) => {
 //-------------------------        VIEW CLIENT INFORMATION      ------------------------------
 
 exports.viewClientInformation = asyncHandler(async (req, res, next) => {
-  // setTimeout(async () => {
   console.log("View Client Function")
-  // console.log(req.user.id)
   const getClientInformation = await Client.find({ userId: req.user.id })
-  // console.log(getTransaction)
   res.status(200).json({
     success: true,
     message: "Success",
     data: getClientInformation,
   });
-  // }, 300);
 });
 // ----------------------------------------------------------------------------------
 
