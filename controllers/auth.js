@@ -439,6 +439,22 @@ exports.viewClientInformation = asyncHandler(async (req, res, next) => {
   });
 });
 // ----------------------------------------------------------------------------------
+//-------------------------        DELETE CLIENT INFORMATION      ------------------------------
+
+exports.deleteClientInformation = asyncHandler(async (req, res, next) => {
+  const clientId = req.params.clientId;
+
+
+  const ifClientExists = await Client.findOne({ _id: clientId })
+
+  if (!ifClientExists) {
+    return res.json("Client ID doesn't exist");
+  }
+  const client = await Client.findByIdAndDelete(clientId);
+
+  return res.json(client);
+});
+// ----------------------------------------------------------------------------------
 
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
