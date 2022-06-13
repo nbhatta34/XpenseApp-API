@@ -2,7 +2,31 @@ const express = require("express");
 const router = express.Router();
 const app = express();
 
-const { register, getMe, login, addTransaction, viewTransaction, deleteTransaction, updateTransaction, addStock, viewStock, updateStock, deleteStock, logout, updateProfile, uploadImage, addCategory, viewCategory, uploadThumbnail, addClientInformation, viewClientInformation, deleteClientInformation, homepage } = require("../controllers/auth");
+const { 
+    register, 
+    getMe, 
+    login, 
+    addTransaction, 
+    viewTransaction, 
+    deleteTransaction, 
+    updateTransaction, 
+    addStock, 
+    viewStock, 
+    updateStock, 
+    deleteStock, 
+    logout, 
+    updateProfile, 
+    uploadImage, 
+    addCategory, 
+    viewCategory, 
+    uploadThumbnail, 
+    addClientInformation, 
+    viewClientInformation, 
+    deleteClientInformation, 
+    addStockCategory,
+    viewStockCategory,
+    uploadStockCategoryThumbnail,
+    homepage } = require("../controllers/auth");
 
 const { protect } = require("../middleware/auth");
 router
@@ -59,10 +83,19 @@ router
 router
     .route("/deleteClientInformation/:clientId")
     .delete(deleteClientInformation)
-    
+
 router
     .route("/deleteCategory/:categoryId")
     .delete(deleteCategory)
+
+router
+    .route("/addStockCategory")
+    .post(protect, addStockCategory)
+    .get(protect, viewStockCategory)
+
+router
+    .route("/:id/:stockCatName/photo")
+    .post(protect, uploadStockCategoryThumbnail);
 
 
 router.route("/home")

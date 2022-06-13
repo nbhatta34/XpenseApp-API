@@ -468,6 +468,34 @@ exports.deleteCategory = asyncHandler(async (req, res, next) => {
   return res.json(category);
 });
 // ----------------------------------------------------------------------------------
+//-----------------------Add Stocks Category ----------------------------------------
+exports.addStockCategory = asyncHandler(async(req, res, next) => {
+  console.log("Add Stocks Category Function")
+  console.log(req.body)
+  console.log(req.user.id)
+  const { categoryName } = req.body;
+  const userId = req.user.id;
+  const stockCategory = await StockCategory.create({
+      categoryName,
+      userId,
+  });
+  return res.json({ stockCategory, status: "200" });
+});
+// ---------------------------------------------------------------------------------
+
+//-------------------------        VIEW STOCK CATEGORY      ------------------------------
+
+exports.viewStockCategory = asyncHandler(async(req, res, next) => {
+  console.log("View Stock Category Function")
+  const getStockCategory = await StockCategory.find({ userId: req.user.id })
+  console.log(getStockCategory)
+  res.status(200).json({
+      success: true,
+      message: "Success",
+      data: getStockCategory,
+  });
+});
+// ----------------------------------------------------------------------------------
 
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
