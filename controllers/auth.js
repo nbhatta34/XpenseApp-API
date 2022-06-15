@@ -436,6 +436,23 @@ exports.viewClientInformation = asyncHandler(async (req, res, next) => {
 });
 // ----------------------------------------------------------------------------------
 
+// +++++++++++++++++++++++++++++++++++++++++  TOTAL EARNING OF EACH DAY OF A MONTH    +++++++++++++++++++++++++++++++++++++++++++
+exports.totalEarning = async (req, res) => {
+  var day = new Date().getUTCDate()
+  console.log(day)
+
+  try {
+    const currentMonthTransactions = await Transaction.aggregate([
+      
+    ])
+    res.json(currentMonthTransactions)
+  } catch (error) {
+    res.json(error)
+  }
+}
+
+// ---------------------------------------------------------------------------------------------------------------------------------
+
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
 
