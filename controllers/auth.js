@@ -149,7 +149,7 @@ exports.homepage = asyncHandler(async (req, res, next) => {
   // }
   // const category = await Category.findByIdAndDelete(categoryId);
 
-  return res.json("Welcome To Homepage");
+  return res.json("Welcome To Home");
 });
 // ----------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
