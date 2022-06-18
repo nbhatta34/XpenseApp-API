@@ -443,7 +443,30 @@ exports.totalEarning = async (req, res) => {
 
   try {
     const currentMonthTransactions = await Transaction.aggregate([
-      
+      { $match: { createdAt: { $lt: new Date(), $gt: new Date(new Date().getTime() - (24 * 60 * 60 * 1000 * day)) }, userId: req.user.id } },
+      {
+        $project: {
+          date: { $dayOfMonth: "$createdAt" },
+          grand_total: "$grandTotal",
+          
+        },
+      },
+      {
+        $group: {
+          _id: "$date",
+          "grand_total": {
+            "$sum": {
+              "$toDouble": "$grand_total"
+            }
+          },
+        },
+
+      },
+      {
+        $sort: {
+          _id: 1
+        },
+      },
     ])
     res.json(currentMonthTransactions)
   } catch (error) {
