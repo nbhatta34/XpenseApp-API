@@ -468,6 +468,51 @@ exports.deleteCategory = asyncHandler(async (req, res, next) => {
   return res.json(category);
 });
 // ----------------------------------------------------------------------------------
+//-----------------------  Add Supplier Information -----------------------------------------
+exports.addSupplierInformation = asyncHandler(async(req, res, next) => {
+  console.log("Add Supplier Function")
+  console.log(req.body)
+  const { supplierName, mobile, address, email } = req.body;
+  const userId = req.user.id;
+  const supplier = await Supplier.create({
+      supplierName,
+      mobile,
+      address,
+      email,
+      userId,
+  });
+  sendTokenResponse(supplier, 200, res);
+});
+
+//-------------------------        VIEW SUPPLIER INFORMATION      ------------------------------
+
+exports.viewSupplierInformation = asyncHandler(async(req, res, next) => {
+  console.log("View Supplier Function")
+  console.log(req.user.id)
+  const getSupplierInformation = await Supplier.find({ userId: req.user.id })
+  console.log(getSupplierInformation)
+  res.status(200).json({
+      success: true,
+      message: "Success",
+      data: getSupplierInformation,
+  });
+});
+// ----------------------------------------------------------------------------------
+//-------------------------        DELETE SUPPLIER INFORMATION      -------------------
+
+exports.deleteSupplierInformation = asyncHandler(async(req, res, next) => {
+  const supplierId = req.params.supplierId;
+
+  const ifSupplierExists = await Supplier.findOne({ _id: supplierId })
+
+  if (!ifSupplierExists) {
+      return res.json("Supplier ID doesn't exist");
+  }
+  const supplier = await Supplier.findByIdAndDelete(supplierId);
+
+  return res.json(supplier);
+});
+// ----------------------------------------------------------------------------------
 
 // +++++++++++++++++++++++++++++++++++++++++  TOTAL EARNING FROM INIVIDUAL CATEGORIES OF CURRENT MONTH    +++++++++++++++++++++++++++++++++++++++++++
 exports.totalEarningInCategories = async (req, res) => {
