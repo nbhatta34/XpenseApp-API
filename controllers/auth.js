@@ -591,6 +591,98 @@ exports.totalEarning = async (req, res) => {
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------------
+//-----------------------Add Stocks Category ----------------------------------------
+exports.addStockCategory = asyncHandler(async(req, res, next) => {
+  console.log("Add Stocks Category Function")
+  console.log(req.body)
+  console.log(req.user.id)
+  const { categoryName } = req.body;
+  const userId = req.user.id;
+  const stockCategory = await StockCategory.create({
+      categoryName,
+      userId,
+  });
+  return res.json({ stockCategory, status: "200" });
+});
+// ---------------------------------------------------------------------------------
+
+//-------------------------        VIEW STOCK CATEGORY      ------------------------------
+
+exports.viewStockCategory = asyncHandler(async(req, res, next) => {
+  console.log("View Stock Category Function")
+  const getStockCategory = await StockCategory.find({ userId: req.user.id })
+  console.log(getStockCategory)
+  res.status(200).json({
+      success: true,
+      message: "Success",
+      data: getStockCategory,
+  });
+});
+// ----------------------------------------------------------------------------------
+// +++++++++++++++++++++++++++++++     UPLOADING STOCK CATEGORY THUMBNAIL PICTURE   ++++++++++++++++++++++
+exports.uploadStockCategoryThumbnail = asyncHandler(async(req, res, next) => {
+  console.log("Upload Stock Category Thumbnail")
+  console.log(req.params.stockCatName)
+
+
+  if (!req.files) {
+      return next(new ErrorResponse(`Please upload a file`, 400));
+  }
+
+  const file = req.files.file;
+
+  const userId = req.user.id;
+
+  // Check file size
+  if (file.size > process.env.MAX_FILE_UPLOAD) {
+      console.log("file thulo vayo hajur")
+      return next(
+          new ErrorResponse(
+              `Please upload an image less than ${process.env.MAX_FILE_UPLOAD}`,
+              400
+          )
+      );
+  }
+
+  filename = `${req.params.catName}_${req.user.id}.png`;
+  console.log(filename);
+
+  file.mv(`${process.env.FILE_UPLOAD_PATH}/${filename}`, async(err) => {
+      if (err) {
+          return next(new ErrorResponse(`Problem with file upload`, 500));
+      }
+
+      //insert the filename into database
+      await StockCategory.findByIdAndUpdate(req.params.id, {
+
+          picture: filename,
+
+      });
+      console.log("image upload vayo hajur")
+  });
+
+  res.status(200).json({
+      success: true,
+      data: file.name,
+  });
+});
+
+//-------------------------        DELETE STOCK CATEGORY      ------------------------------
+
+exports.deleteStockCategory = asyncHandler(async(req, res, next) => {
+  const stockCategoryId = req.params.categoryId;
+
+
+  const ifStockCategoryExists = await StockCategory.findOne({ _id: stockCategoryId })
+
+  if (!ifStockCategoryExists) {
+      return res.json("Category ID doesn't exist");
+  }
+  const stockCategory = await StockCategory.findByIdAndDelete(stockCategoryId);
+
+  return res.json(stockCategory);
+});
+// ----------------------------------------------------------------------------------
 
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
