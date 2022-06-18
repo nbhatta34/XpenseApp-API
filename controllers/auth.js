@@ -544,6 +544,23 @@ exports.uploadStockCategoryThumbnail = asyncHandler(async(req, res, next) => {
   });
 });
 
+//-------------------------        DELETE STOCK CATEGORY      ------------------------------
+
+exports.deleteStockCategory = asyncHandler(async(req, res, next) => {
+  const stockCategoryId = req.params.categoryId;
+
+
+  const ifStockCategoryExists = await StockCategory.findOne({ _id: stockCategoryId })
+
+  if (!ifStockCategoryExists) {
+      return res.json("Category ID doesn't exist");
+  }
+  const stockCategory = await StockCategory.findByIdAndDelete(stockCategoryId);
+
+  return res.json(stockCategory);
+});
+// ----------------------------------------------------------------------------------
+
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
 
