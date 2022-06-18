@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const app = express();
 
-const { register, getMe, login, addTransaction, viewTransaction, deleteTransaction, updateTransaction, addStock, viewStock, updateStock, deleteStock, logout, updateProfile, uploadImage, addCategory, viewCategory, uploadThumbnail, addClientInformation, viewClientInformation, homepage, totalEarningInCategories } = require("../controllers/auth");
+const { register, getMe, login, addTransaction, viewTransaction, deleteTransaction, updateTransaction, addStock, viewStock, updateStock, deleteStock, logout, updateProfile, uploadImage, addCategory, viewCategory, uploadThumbnail, addClientInformation, viewClientInformation, totalEarning, homepage } = require("../controllers/auth");
 
 const { protect } = require("../middleware/auth");
 router
@@ -69,7 +69,12 @@ router
     .route("/totalEarningInCategories")
     .get(protect, totalEarningInCategories)
 
+router
+    .route("/totalEarning")
+    .get(protect, totalEarning)
+
 router.route("/home")
     .get(homepage)
+
 
 module.exports = router;

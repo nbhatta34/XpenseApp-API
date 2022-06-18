@@ -507,6 +507,46 @@ exports.totalEarningInCategories = async (req, res) => {
 
 //-----------------------------------------------------------------------------------------------------------------------------------
 
+// +++++++++++++++++++++++++++++++++++++++++  TOTAL EARNING OF EACH DAY OF A MONTH    +++++++++++++++++++++++++++++++++++++++++++
+exports.totalEarning = async (req, res) => {
+  var day = new Date().getUTCDate()
+  console.log(day)
+
+  try {
+    const currentMonthTransactions = await Transaction.aggregate([
+      { $match: { createdAt: { $lt: new Date(), $gt: new Date(new Date().getTime() - (24 * 60 * 60 * 1000 * day)) }, userId: req.user.id } },
+      {
+        $project: {
+          date: { $dayOfMonth: "$createdAt" },
+          grand_total: "$grandTotal",
+          
+        },
+      },
+      {
+        $group: {
+          _id: "$date",
+          "grand_total": {
+            "$sum": {
+              "$toDouble": "$grand_total"
+            }
+          },
+        },
+
+      },
+      {
+        $sort: {
+          _id: 1
+        },
+      },
+    ])
+    res.json(currentMonthTransactions)
+  } catch (error) {
+    res.json(error)
+  }
+}
+
+// ---------------------------------------------------------------------------------------------------------------------------------
+
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
 
