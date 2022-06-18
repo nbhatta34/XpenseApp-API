@@ -469,6 +469,44 @@ exports.deleteCategory = asyncHandler(async (req, res, next) => {
 });
 // ----------------------------------------------------------------------------------
 
+// +++++++++++++++++++++++++++++++++++++++++  TOTAL EARNING FROM INIVIDUAL CATEGORIES OF CURRENT MONTH    +++++++++++++++++++++++++++++++++++++++++++
+exports.totalEarningInCategories = async (req, res) => {
+  var day = new Date().getUTCDate()
+  try {
+    const currentMonthCategoryEarning = await Transaction.aggregate([
+      { $match: { createdAt: { $lt: new Date(), $gt: new Date(new Date().getTime() - (24 * 60 * 60 * 1000 * day)) }, userId: req.user.id } },
+      {
+        $project: {
+          date: { $dayOfMonth: "$createdAt" },
+          grand_total: "$grandTotal",
+          category: "$category"
+        },
+      },
+      {
+        $group: {
+          _id: "$category",
+          "grand_total": {
+            "$sum": {
+              "$toDouble": "$grand_total"
+            }
+          },
+        },
+
+      },
+      {
+        $sort: {
+          _id: 1
+        },
+      },
+    ])
+    res.json(currentMonthCategoryEarning)
+  } catch (error) {
+    res.json(error)
+  }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------
+
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
 
