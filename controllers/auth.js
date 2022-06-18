@@ -498,6 +498,21 @@ exports.viewSupplierInformation = asyncHandler(async(req, res, next) => {
   });
 });
 // ----------------------------------------------------------------------------------
+//-------------------------        DELETE SUPPLIER INFORMATION      -------------------
+
+exports.deleteSupplierInformation = asyncHandler(async(req, res, next) => {
+  const supplierId = req.params.supplierId;
+
+  const ifSupplierExists = await Supplier.findOne({ _id: supplierId })
+
+  if (!ifSupplierExists) {
+      return res.json("Supplier ID doesn't exist");
+  }
+  const supplier = await Supplier.findByIdAndDelete(supplierId);
+
+  return res.json(supplier);
+});
+// ----------------------------------------------------------------------------------
 
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {

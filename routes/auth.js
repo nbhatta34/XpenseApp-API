@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const app = express();
 
-const { register, getMe, login, addTransaction, viewTransaction, deleteTransaction, updateTransaction, addStock, viewStock, updateStock, deleteStock, logout, updateProfile, uploadImage, addCategory, viewCategory, uploadThumbnail, addClientInformation, viewClientInformation, deleteClientInformation, homepage, addSupplierInformation, viewSupplierInformation } = require("../controllers/auth");
+const { register, getMe, login, addTransaction, viewTransaction, deleteTransaction, updateTransaction, addStock, viewStock, updateStock, deleteStock, logout, updateProfile, uploadImage, addCategory, viewCategory, uploadThumbnail, addClientInformation, viewClientInformation, deleteClientInformation, homepage, addSupplierInformation, viewSupplierInformation , deleteSupplierInformation} = require("../controllers/auth");
 
 const { protect } = require("../middleware/auth");
 router
@@ -68,6 +68,10 @@ router
     .route("/addSupplierInformation")
     .post(protect, addSupplierInformation)
     .get(protect, viewSupplierInformation)
+
+router
+    .route("/deleteSupplierInformation/:supplierId")
+    .delete(deleteSupplierInformation)
 
 
 router.route("/home")
