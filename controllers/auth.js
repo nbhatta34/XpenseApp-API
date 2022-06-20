@@ -469,44 +469,44 @@ exports.deleteCategory = asyncHandler(async (req, res, next) => {
 });
 // ----------------------------------------------------------------------------------
 //-----------------------  Add Supplier Information -----------------------------------------
-exports.addSupplierInformation = asyncHandler(async(req, res, next) => {
+exports.addSupplierInformation = asyncHandler(async (req, res, next) => {
   console.log("Add Supplier Function")
   console.log(req.body)
   const { supplierName, mobile, address, email } = req.body;
   const userId = req.user.id;
   const supplier = await Supplier.create({
-      supplierName,
-      mobile,
-      address,
-      email,
-      userId,
+    supplierName,
+    mobile,
+    address,
+    email,
+    userId,
   });
   sendTokenResponse(supplier, 200, res);
 });
 
 //-------------------------        VIEW SUPPLIER INFORMATION      ------------------------------
 
-exports.viewSupplierInformation = asyncHandler(async(req, res, next) => {
+exports.viewSupplierInformation = asyncHandler(async (req, res, next) => {
   console.log("View Supplier Function")
   console.log(req.user.id)
   const getSupplierInformation = await Supplier.find({ userId: req.user.id })
   console.log(getSupplierInformation)
   res.status(200).json({
-      success: true,
-      message: "Success",
-      data: getSupplierInformation,
+    success: true,
+    message: "Success",
+    data: getSupplierInformation,
   });
 });
 // ----------------------------------------------------------------------------------
 //-------------------------        DELETE SUPPLIER INFORMATION      -------------------
 
-exports.deleteSupplierInformation = asyncHandler(async(req, res, next) => {
+exports.deleteSupplierInformation = asyncHandler(async (req, res, next) => {
   const supplierId = req.params.supplierId;
 
   const ifSupplierExists = await Supplier.findOne({ _id: supplierId })
 
   if (!ifSupplierExists) {
-      return res.json("Supplier ID doesn't exist");
+    return res.json("Supplier ID doesn't exist");
   }
   const supplier = await Supplier.findByIdAndDelete(supplierId);
 
@@ -564,7 +564,7 @@ exports.totalEarning = async (req, res) => {
         $project: {
           date: { $dayOfMonth: "$createdAt" },
           grand_total: "$grandTotal",
-          
+
         },
       },
       {
@@ -592,15 +592,15 @@ exports.totalEarning = async (req, res) => {
 
 // ---------------------------------------------------------------------------------------------------------------------------------
 //-----------------------Add Stocks Category ----------------------------------------
-exports.addStockCategory = asyncHandler(async(req, res, next) => {
+exports.addStockCategory = asyncHandler(async (req, res, next) => {
   console.log("Add Stocks Category Function")
   console.log(req.body)
   console.log(req.user.id)
   const { categoryName } = req.body;
   const userId = req.user.id;
   const stockCategory = await StockCategory.create({
-      categoryName,
-      userId,
+    categoryName,
+    userId,
   });
   return res.json({ stockCategory, status: "200" });
 });
@@ -608,25 +608,25 @@ exports.addStockCategory = asyncHandler(async(req, res, next) => {
 
 //-------------------------        VIEW STOCK CATEGORY      ------------------------------
 
-exports.viewStockCategory = asyncHandler(async(req, res, next) => {
+exports.viewStockCategory = asyncHandler(async (req, res, next) => {
   console.log("View Stock Category Function")
   const getStockCategory = await StockCategory.find({ userId: req.user.id })
   console.log(getStockCategory)
   res.status(200).json({
-      success: true,
-      message: "Success",
-      data: getStockCategory,
+    success: true,
+    message: "Success",
+    data: getStockCategory,
   });
 });
 // ----------------------------------------------------------------------------------
 // +++++++++++++++++++++++++++++++     UPLOADING STOCK CATEGORY THUMBNAIL PICTURE   ++++++++++++++++++++++
-exports.uploadStockCategoryThumbnail = asyncHandler(async(req, res, next) => {
+exports.uploadStockCategoryThumbnail = asyncHandler(async (req, res, next) => {
   console.log("Upload Stock Category Thumbnail")
   console.log(req.params.stockCatName)
 
 
   if (!req.files) {
-      return next(new ErrorResponse(`Please upload a file`, 400));
+    return next(new ErrorResponse(`Please upload a file`, 400));
   }
 
   const file = req.files.file;
@@ -635,54 +635,70 @@ exports.uploadStockCategoryThumbnail = asyncHandler(async(req, res, next) => {
 
   // Check file size
   if (file.size > process.env.MAX_FILE_UPLOAD) {
-      console.log("file thulo vayo hajur")
-      return next(
-          new ErrorResponse(
-              `Please upload an image less than ${process.env.MAX_FILE_UPLOAD}`,
-              400
-          )
-      );
+    console.log("file thulo vayo hajur")
+    return next(
+      new ErrorResponse(
+        `Please upload an image less than ${process.env.MAX_FILE_UPLOAD}`,
+        400
+      )
+    );
   }
 
   filename = `${req.params.catName}_${req.user.id}.png`;
   console.log(filename);
 
-  file.mv(`${process.env.FILE_UPLOAD_PATH}/${filename}`, async(err) => {
-      if (err) {
-          return next(new ErrorResponse(`Problem with file upload`, 500));
-      }
+  file.mv(`${process.env.FILE_UPLOAD_PATH}/${filename}`, async (err) => {
+    if (err) {
+      return next(new ErrorResponse(`Problem with file upload`, 500));
+    }
 
-      //insert the filename into database
-      await StockCategory.findByIdAndUpdate(req.params.id, {
+    //insert the filename into database
+    await StockCategory.findByIdAndUpdate(req.params.id, {
 
-          picture: filename,
+      picture: filename,
 
-      });
-      console.log("image upload vayo hajur")
+    });
+    console.log("image upload vayo hajur")
   });
 
   res.status(200).json({
-      success: true,
-      data: file.name,
+    success: true,
+    data: file.name,
   });
 });
 
 //-------------------------        DELETE STOCK CATEGORY      ------------------------------
 
-exports.deleteStockCategory = asyncHandler(async(req, res, next) => {
+exports.deleteStockCategory = asyncHandler(async (req, res, next) => {
   const stockCategoryId = req.params.categoryId;
 
 
   const ifStockCategoryExists = await StockCategory.findOne({ _id: stockCategoryId })
 
   if (!ifStockCategoryExists) {
-      return res.json("Category ID doesn't exist");
+    return res.json("Category ID doesn't exist");
   }
   const stockCategory = await StockCategory.findByIdAndDelete(stockCategoryId);
 
   return res.json(stockCategory);
 });
 // ----------------------------------------------------------------------------------
+
+// +++++++++++++++++++++++++++++++++++++++++  TOTAL QUANTITY OF INIVIDUAL CATEGORIES OF CURRENT MONTH    +++++++++++++++++++++++++++++++++++++++++++
+exports.totalQuantityOfCategories = async (req, res) => {
+  var day = new Date().getUTCDate()
+
+  try {
+    const currentMonthCategoryQuantity = await Transaction.aggregate([
+      { $match: { createdAt: { $lt: new Date(), $gt: new Date(new Date().getTime() - (24 * 60 * 60 * 1000 * day)) }, userId: req.user.id } },
+      
+    ])
+    res.json(currentMonthCategoryQuantity)
+  } catch (error) {
+    res.json(error)
+  }
+}
+// ---------------------------------------------------------------------------------------------------------------------------------
 
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
