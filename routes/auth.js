@@ -27,6 +27,7 @@ const {
     viewStockCategory,
     uploadStockCategoryThumbnail,
     deleteStockCategory,
+    totalQuantityOfStockCategories,
     homepage } = require("../controllers/auth");
 
 const { protect } = require("../middleware/auth");
@@ -121,6 +122,9 @@ router
     .delete(deleteStockCategory)
 
 
+router
+    .route("/totalQuantityOfStockCategories")
+    .get(protect, totalQuantityOfStockCategories)
 
 router.route("/home")
     .get(homepage)

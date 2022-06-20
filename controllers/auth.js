@@ -684,6 +684,24 @@ exports.deleteStockCategory = asyncHandler(async(req, res, next) => {
 });
 // ----------------------------------------------------------------------------------
 
+// +++++++++++++++++++++++++++++++++++++++++  TOTAL QUANTITY OF INIVIDUAL STOCK CATEGORIES OF CURRENT MONTH    +++++++++++++++++++++++++++++++++++++++++++
+exports.totalQuantityOfStockCategories = async(req, res) => {
+  var day = new Date().getUTCDate()
+
+  try {
+      const currentMonthStockCategoryQuantity = await Stock.aggregate([
+          { $match: { createdAt: { $lt: new Date(), $gt: new Date(new Date().getTime() - (24 * 60 * 60 * 1000 * day)) }, userId: req.user.id } },
+          
+      ])
+      res.json(currentMonthStockCategoryQuantity)
+  } catch (error) {
+      res.json(error)
+  }
+}
+// ---------------------------------------------------------------------------------------------------------------------------------
+
+
+
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
 
