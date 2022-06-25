@@ -28,8 +28,11 @@ const {
     uploadStockCategoryThumbnail,
     deleteStockCategory,
     searchClientInfo,
+    totalEarningInCategories,
     homepage
 } = require("../controllers/auth");
+
+
 
 const { protect } = require("../middleware/auth");
 router
@@ -125,6 +128,10 @@ router
 router
     .route("/searchClientInfo")
     .get(protect, searchClientInfo)
+
+router
+    .route("/totalEarningInCategories")
+    .get(protect, totalEarningInCategories)
 
 router.route("/home")
     .get(homepage)
