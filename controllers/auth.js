@@ -733,6 +733,46 @@ exports.totalQuantityOfCategories = async (req, res) => {
 }
 // ---------------------------------------------------------------------------------------------------------------------------------
 
+// +++++++++++++++++++++++++++++++++++++++++  TOTAL QUANTITY OF INIVIDUAL STOCK CATEGORIES OF CURRENT MONTH    +++++++++++++++++++++++++++++++++++++++++++
+exports.totalQuantityOfStockCategories = async(req, res) => {
+  var day = new Date().getUTCDate()
+
+  try {
+      const currentMonthStockCategoryQuantity = await Stock.aggregate([
+          { $match: { createdAt: { $lt: new Date(), $gt: new Date(new Date().getTime() - (24 * 60 * 60 * 1000 * day)) }, userId: req.user.id } },
+          {
+              $project: {
+                  date: { $dayOfMonth: "$createdAt" },
+                  quantity: "$quantity",
+                  category: "$category"
+              },
+          },
+          {
+              $group: {
+                  _id: "$category",
+                  "quantity": {
+                      "$sum": {
+                          "$toDouble": "$quantity"
+                      }
+                  },
+              },
+
+          },
+          {
+              $sort: {
+                  _id: 1
+              },
+          },
+      ])
+      res.json(currentMonthStockCategoryQuantity)
+  } catch (error) {
+      res.json(error)
+  }
+}
+// ---------------------------------------------------------------------------------------------------------------------------------
+
+
+
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
 

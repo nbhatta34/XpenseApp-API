@@ -29,10 +29,13 @@ const {
     deleteStockCategory,
     searchClientInfo,
     totalEarningInCategories,
+    totalQuantityOfStockCategories,
     homepage
 } = require("../controllers/auth");
 
 
+   
+    
 
 const { protect } = require("../middleware/auth");
 router
@@ -132,6 +135,10 @@ router
 router
     .route("/totalEarningInCategories")
     .get(protect, totalEarningInCategories)
+
+router
+    .route("/totalQuantityOfStockCategories")
+    .get(protect, totalQuantityOfStockCategories)
 
 router.route("/home")
     .get(homepage)
