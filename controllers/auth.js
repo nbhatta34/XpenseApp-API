@@ -691,7 +691,29 @@ exports.totalQuantityOfStockCategories = async(req, res) => {
   try {
       const currentMonthStockCategoryQuantity = await Stock.aggregate([
           { $match: { createdAt: { $lt: new Date(), $gt: new Date(new Date().getTime() - (24 * 60 * 60 * 1000 * day)) }, userId: req.user.id } },
-          
+          {
+              $project: {
+                  date: { $dayOfMonth: "$createdAt" },
+                  quantity: "$quantity",
+                  category: "$category"
+              },
+          },
+          {
+              $group: {
+                  _id: "$category",
+                  "quantity": {
+                      "$sum": {
+                          "$toDouble": "$quantity"
+                      }
+                  },
+              },
+
+          },
+          {
+              $sort: {
+                  _id: 1
+              },
+          },
       ])
       res.json(currentMonthStockCategoryQuantity)
   } catch (error) {
