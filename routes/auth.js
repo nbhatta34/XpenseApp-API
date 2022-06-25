@@ -30,12 +30,13 @@ const {
     searchClientInfo,
     totalEarningInCategories,
     totalQuantityOfStockCategories,
+    searchTransaction,
     homepage
 } = require("../controllers/auth");
 
 
-   
-    
+
+
 
 const { protect } = require("../middleware/auth");
 router
@@ -131,6 +132,12 @@ router
 router
     .route("/searchClientInfo")
     .get(protect, searchClientInfo)
+
+router
+    .route("/searchTransaction")
+    .get(protect, searchTransaction)
+
+
 
 router
     .route("/totalEarningInCategories")

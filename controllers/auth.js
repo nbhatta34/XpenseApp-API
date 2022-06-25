@@ -772,6 +772,19 @@ exports.totalQuantityOfStockCategories = async(req, res) => {
 // ---------------------------------------------------------------------------------------------------------------------------------
 
 
+//-------------------------        SEARCH TRANSACTIONS      ------------------------------
+
+exports.searchTransaction = asyncHandler(async(req, res, next) => {
+  // setTimeout(async () => {
+  console.log("Search Transactions Function")
+      // console.log(req.user.id)
+  const getTransaction = await Transaction.find({ userId: req.user.id })
+      // console.log(getTransaction)
+  res.status(200).send(getTransaction)
+      // }, 300);
+});
+// ----------------------------------------------------------------------------------
+
 
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
