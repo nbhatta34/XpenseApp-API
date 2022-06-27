@@ -784,6 +784,32 @@ exports.searchTransaction = asyncHandler(async(req, res, next) => {
       // }, 300);
 });
 // ----------------------------------------------------------------------------------
+//+++++++++++++++++++++++++++++++++++++++++         COMPARE CURRENT USER PASSWORD       +++++++++++++++++++++++++++++++++
+
+exports.comparePassword = asyncHandler(async(req, res, next) => {
+  const { password } = req.body;
+  console.log(password);
+  const id = req.user.id
+
+  if (!password) {
+      return next(new ErrorResponse("Please enter your current password"), 400);
+  }
+
+  // Check User in Database
+  const getPassword = await User.findOne({ userId: id }).select("+password");
+
+  console.log(getPassword["password"]);
+
+  if (getPassword["password"] == password) {
+      console.log("Passwords Matched")
+      res.status(200).send(true)
+  } else {
+      console.log("Passwords Don't Match. Re-type Password")
+      res.send(false)
+  }
+
+});
+// -----------------------------------------------------------------------------------------------------------------------
 
 
 // Get token from model , create cookie and send response

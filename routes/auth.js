@@ -31,6 +31,7 @@ const {
     totalEarningInCategories,
     totalQuantityOfStockCategories,
     searchTransaction,
+    comparePassword,
     homepage
 } = require("../controllers/auth");
 
@@ -137,8 +138,6 @@ router
     .route("/searchTransaction")
     .get(protect, searchTransaction)
 
-
-
 router
     .route("/totalEarningInCategories")
     .get(protect, totalEarningInCategories)
@@ -146,6 +145,10 @@ router
 router
     .route("/totalQuantityOfStockCategories")
     .get(protect, totalQuantityOfStockCategories)
+
+router
+    .route("/comparePassword")
+    .post(protect, comparePassword)
 
 router.route("/home")
     .get(homepage)
