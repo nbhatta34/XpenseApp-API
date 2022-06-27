@@ -31,6 +31,7 @@ const {
     totalEarningInCategories,
     totalQuantityOfStockCategories,
     searchTransaction,
+    getSelectedDateTransactions,
     homepage
 } = require("../controllers/auth");
 
@@ -146,6 +147,10 @@ router
 router
     .route("/totalQuantityOfStockCategories")
     .get(protect, totalQuantityOfStockCategories)
+
+router
+    .route("/getSelectedDateTransactions/:date")
+    .get(protect, getSelectedDateTransactions)
 
 router.route("/home")
     .get(homepage)

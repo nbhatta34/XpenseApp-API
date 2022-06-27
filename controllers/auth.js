@@ -786,6 +786,18 @@ exports.searchTransaction = asyncHandler(async(req, res, next) => {
 // ----------------------------------------------------------------------------------
 
 
+// +++++++++++++++++++++++++++++++++++++++++  GET SELECTED DATE TRANSACTIONS   +++++++++++++++++++++++++++++++++++++++++++
+exports.getSelectedDateTransactions = async(req, res) => {
+
+  const selectedDate = req.params.date;
+  const yyyymmdd = selectedDate.split(" ")[0]
+  const commaDate = yyyymmdd.split("-")
+
+  
+}
+// ------------------------------------------------------------------------------------------------------------------
+
+
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
 
