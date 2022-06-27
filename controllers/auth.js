@@ -696,92 +696,196 @@ exports.searchClientInfo = asyncHandler(async(req, res, next) => {
 // ----------------------------------------------------------------------------------
 
 // +++++++++++++++++++++++++++++++++++++++++  TOTAL QUANTITY OF INIVIDUAL CATEGORIES OF CURRENT MONTH    +++++++++++++++++++++++++++++++++++++++++++
-exports.totalQuantityOfCategories = async (req, res) => {
-  var day = new Date().getUTCDate()
+exports.totalQuantityOfCategories = async(req, res) => {
+        var day = new Date().getUTCDate()
 
-  try {
-    const currentMonthCategoryQuantity = await Transaction.aggregate([
-      { $match: { createdAt: { $lt: new Date(), $gt: new Date(new Date().getTime() - (24 * 60 * 60 * 1000 * day)) }, userId: req.user.id } },
-      {
-        $project: {
-          date: { $dayOfMonth: "$createdAt" },
-          quantity: "$quantity",
-          category: "$category"
-        },
-      },
-      {
-        $group: {
-          _id: "$category",
-          "quantity": {
-            "$sum": {
-              "$toDouble": "$quantity"
-            }
-          },
-        },
+        try {
+            const currentMonthCategoryQuantity = await Transaction.aggregate([
+                { $match: { createdAt: { $lt: new Date(), $gt: new Date(new Date().getTime() - (24 * 60 * 60 * 1000 * day)) }, userId: req.user.id } },
+                {
+                    $project: {
+                        date: { $dayOfMonth: "$createdAt" },
+                        quantity: "$quantity",
+                        category: "$category"
+                    },
+                },
+                {
+                    $group: {
+                        _id: "$category",
+                        "quantity": {
+                            "$sum": {
+                                "$toDouble": "$quantity"
+                            }
+                        },
+                    },
 
-      },
-      {
-        $sort: {
-          _id: 1
-        },
-      },
-    ])
-    res.json(currentMonthCategoryQuantity)
-  } catch (error) {
-    res.json(error)
-  }
-}
-// ---------------------------------------------------------------------------------------------------------------------------------
+                },
+                {
+                    $sort: {
+                        _id: 1
+                    },
+                },
+            ])
+            res.json(currentMonthCategoryQuantity)
+        } catch (error) {
+            res.json(error)
+        }
+    }
+    // ---------------------------------------------------------------------------------------------------------------------------------
 
 // +++++++++++++++++++++++++++++++++++++++++  TOTAL QUANTITY OF INIVIDUAL STOCK CATEGORIES OF CURRENT MONTH    +++++++++++++++++++++++++++++++++++++++++++
 exports.totalQuantityOfStockCategories = async(req, res) => {
-  var day = new Date().getUTCDate()
+        var day = new Date().getUTCDate()
 
-  try {
-      const currentMonthStockCategoryQuantity = await Stock.aggregate([
-          { $match: { createdAt: { $lt: new Date(), $gt: new Date(new Date().getTime() - (24 * 60 * 60 * 1000 * day)) }, userId: req.user.id } },
-          {
-              $project: {
-                  date: { $dayOfMonth: "$createdAt" },
-                  quantity: "$quantity",
-                  category: "$category"
-              },
-          },
-          {
-              $group: {
-                  _id: "$category",
-                  "quantity": {
-                      "$sum": {
-                          "$toDouble": "$quantity"
-                      }
-                  },
-              },
+        try {
+            const currentMonthStockCategoryQuantity = await Stock.aggregate([
+                { $match: { createdAt: { $lt: new Date(), $gt: new Date(new Date().getTime() - (24 * 60 * 60 * 1000 * day)) }, userId: req.user.id } },
+                {
+                    $project: {
+                        date: { $dayOfMonth: "$createdAt" },
+                        quantity: "$quantity",
+                        category: "$category"
+                    },
+                },
+                {
+                    $group: {
+                        _id: "$category",
+                        "quantity": {
+                            "$sum": {
+                                "$toDouble": "$quantity"
+                            }
+                        },
+                    },
 
-          },
-          {
-              $sort: {
-                  _id: 1
-              },
-          },
-      ])
-      res.json(currentMonthStockCategoryQuantity)
-  } catch (error) {
-      res.json(error)
-  }
-}
-// ---------------------------------------------------------------------------------------------------------------------------------
+                },
+                {
+                    $sort: {
+                        _id: 1
+                    },
+                },
+            ])
+            res.json(currentMonthStockCategoryQuantity)
+        } catch (error) {
+            res.json(error)
+        }
+    }
+    // ---------------------------------------------------------------------------------------------------------------------------------
 
 
 //-------------------------        SEARCH TRANSACTIONS      ------------------------------
 
 exports.searchTransaction = asyncHandler(async(req, res, next) => {
-  // setTimeout(async () => {
-  console.log("Search Transactions Function")
-      // console.log(req.user.id)
-  const getTransaction = await Transaction.find({ userId: req.user.id })
-      // console.log(getTransaction)
-  res.status(200).send(getTransaction)
-      // }, 300);
+    // setTimeout(async () => {
+    console.log("Search Transactions Function")
+        // console.log(req.user.id)
+    const getTransaction = await Transaction.find({ userId: req.user.id })
+        // console.log(getTransaction)
+    res.status(200).send(getTransaction)
+        // }, 300);
+});
+// ----------------------------------------------------------------------------------
+
+
+
+// +++++++++++++++++++++++++++++++     ADD USER DOCUMENTS   ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+exports.addDocuments = asyncHandler(async(req, res, next) => {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+        return next(new ErrorResponse(`No user found with ${req.params.id}`), 404);
+    }
+
+    if (!req.files) {
+        return next(new ErrorResponse(`Please upload a file`, 400));
+    }
+
+    const file = req.files;
+
+    if (Array.isArray(file.picture)) {
+        file.picture.map((image) => {
+
+            // Check file size
+            if (image.size > process.env.MAX_FILE_UPLOAD) {
+                console.log("File size is larger than uplaod limit")
+                return next(
+                    new ErrorResponse(
+                        `Please upload an image less than ${process.env.MAX_FILE_UPLOAD}`,
+                        400
+                    )
+                );
+            }
+
+            filename = `photo_${user.id}_${image.name}`;
+
+            image.mv(`${process.env.FILE_UPLOAD_PATH}/${filename}`, async(err) => {
+                if (err) {
+                    return next(new ErrorResponse(`Problem with file upload`, 500));
+                }
+
+                //insert the filename into database
+                await Document.create({
+
+                    picture: image.name,
+                    userId: req.user.id,
+
+                });
+                console.log("Image uplaoded successfully")
+            });
+
+        })
+    } else {
+        const fileList = [];
+
+        fileList.push(file.picture);
+        fileList.map((image) => {
+
+            // Check file size
+            if (image.size > process.env.MAX_FILE_UPLOAD) {
+                console.log("File size is larger than uplaod limit")
+                return next(
+                    new ErrorResponse(
+                        `Please upload an image less than ${process.env.MAX_FILE_UPLOAD}`,
+                        400
+                    )
+                );
+            }
+
+            filename = `photo_${user.id}_${image.name}`;
+
+            image.mv(`${process.env.FILE_UPLOAD_PATH}/${filename}`, async(err) => {
+                if (err) {
+                    return next(new ErrorResponse(`Problem with file upload`, 500));
+                }
+
+                //insert the filename into database
+                await Document.create({
+
+                    picture: image.name,
+                    userId: req.user.id,
+
+                });
+                console.log("Image uplaoded successfully")
+            });
+
+        })
+    }
+
+    res.status(200).json({
+        success: true,
+    });
+});
+// -----------------------------------------------------------------------------------------------------------------------
+
+//-------------------------        VIEW ALL USER DOCUMENTS      ------------------------------
+
+exports.fetchDocuments = asyncHandler(async(req, res, next) => {
+    console.log("View Documents Function")
+    console.log(req.user.id)
+    const getDocuments = await Document.find({ userId: req.user.id })
+        // console.log(getDocuments[-])
+    res.status(200).json({
+        success: true,
+        data: getDocuments,
+    });
 });
 // ----------------------------------------------------------------------------------
 

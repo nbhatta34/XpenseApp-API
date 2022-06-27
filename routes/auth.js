@@ -31,6 +31,8 @@ const {
     totalEarningInCategories,
     totalQuantityOfStockCategories,
     searchTransaction,
+    addDocuments,
+    fetchDocuments,
     homepage
 } = require("../controllers/auth");
 
@@ -146,6 +148,14 @@ router
 router
     .route("/totalQuantityOfStockCategories")
     .get(protect, totalQuantityOfStockCategories)
+
+router
+    .route("/addDocuments")
+    .post(protect, addDocuments)
+
+router
+    .route("/fetchDocuments")
+    .get(protect, fetchDocuments)
 
 router.route("/home")
     .get(homepage)
