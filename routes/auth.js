@@ -34,6 +34,7 @@ const {
     addDocuments,
     fetchDocuments,
     deleteDocument,
+    getSelectedDateTransactions,
     homepage
 } = require("../controllers/auth");
 
@@ -161,6 +162,10 @@ router
 router
     .route("/deleteDocument/:documentId")
     .delete(protect, deleteDocument)
+
+router
+    .route("/getSelectedDateTransactions/:date")
+    .get(protect, getSelectedDateTransactions)
 
 router.route("/home")
     .get(homepage)
