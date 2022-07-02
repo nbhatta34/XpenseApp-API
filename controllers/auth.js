@@ -793,7 +793,30 @@ exports.getSelectedDateTransactions = async(req, res) => {
   const yyyymmdd = selectedDate.split(" ")[0]
   const commaDate = yyyymmdd.split("-")
 
-  
+  const startOfDay = new Date();
+  startOfDay.setFullYear(commaDate[0], commaDate[1] - 1, commaDate[2])
+  startOfDay.setUTCHours(0, 0, 0, 0);
+
+  const endOfDay = new Date();
+  endOfDay.setFullYear(commaDate[0], commaDate[1] - 1, commaDate[2])
+  endOfDay.setUTCHours(23, 59, 59, 999);
+
+  try {
+      const selectedDateTransactions = await Transaction.aggregate([{
+              $match: {
+                  createdAt: {
+                      $gte: startOfDay,
+                      $lte: endOfDay
+                  },
+                  userId: req.user.id
+              }
+          },
+
+      ])
+      res.json(selectedDateTransactions)
+  } catch (error) {
+      res.json(error)
+  }
 }
 // ------------------------------------------------------------------------------------------------------------------
 
