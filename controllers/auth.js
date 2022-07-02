@@ -810,6 +810,32 @@ exports.comparePassword = asyncHandler(async(req, res, next) => {
 
 });
 // -----------------------------------------------------------------------------------------------------------------------
+//+++++++++++++++++++++++++++++++++++++++++         CHANGE USER PASSWORD       +++++++++++++++++++++++++++++++++
+
+exports.changePassword = asyncHandler(async(req, res, next) => {
+  const { password } = req.body;
+
+  const id = req.user.id
+
+  console.log(id)
+
+  const getPassword = await User.findOne({ userId: id }).select("+password");
+
+  console.log(getPassword)
+
+  if (password == getPassword["password"]) {
+      console.log("You have already used this password. Please enter a new password.")
+      res.send(false);
+
+  } else {
+
+      // Check User in Database
+      const changePass = await User.findByIdAndUpdate({ "_id": id }, { "password": password })
+      res.status(200).send(true)
+  }
+
+});
+// -----------------------------------------------------------------------------------------------------------------------
 
 
 // Get token from model , create cookie and send response

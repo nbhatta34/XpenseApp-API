@@ -32,6 +32,7 @@ const {
     totalQuantityOfStockCategories,
     searchTransaction,
     comparePassword,
+    changePassword,
     homepage
 } = require("../controllers/auth");
 
@@ -149,6 +150,10 @@ router
 router
     .route("/comparePassword")
     .post(protect, comparePassword)
+
+router
+    .route("/changePassword")
+    .post(protect, changePassword)
 
 router.route("/home")
     .get(homepage)
