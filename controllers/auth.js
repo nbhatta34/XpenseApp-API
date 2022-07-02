@@ -186,6 +186,27 @@ exports.verifyOTP = asyncHandler(async(req, res, next) => {
   }
 })
 
+exports.resendOTP = asyncHandler(async(req, res, next) => {
+  try {
+      let { userId, email } = req.params;
+
+      console.log(userId, email)
+
+      if (!userId || !email) {
+          throw Error("Empty user details are not allowed");
+      } else {
+          // delete existing OTP records and resend the OTP mail 
+          await UserOTPVerification.deleteMany({ userId });
+          sendOTPVerificationEmail({ _id: userId, email }, res);
+      }
+  } catch (error) {
+      res.json({
+          status: "FAILED",
+          message: error.message,
+      })
+  }
+})
+
 
 
 //-------------------          LOGIN USER        ---------------------------------------

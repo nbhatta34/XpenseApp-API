@@ -33,6 +33,7 @@ const {
     searchTransaction,
     verifyOTP,
     getUserId,
+    resendOTP,
     homepage
 } = require("../controllers/auth");
 
@@ -154,6 +155,10 @@ router
 router
     .route("/verifyOTP/:userId/:otp")
     .post(verifyOTP)
+
+    router
+    .route("/resendOTP/:userId/:email")
+    .post(resendOTP)
 
 
 router.route("/home")
