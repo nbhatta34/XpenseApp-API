@@ -33,6 +33,7 @@ const {
     searchTransaction,
     addDocuments,
     fetchDocuments,
+    deleteDocument,
     homepage
 } = require("../controllers/auth");
 
@@ -156,6 +157,10 @@ router
 router
     .route("/fetchDocuments")
     .get(protect, fetchDocuments)
+
+router
+    .route("/deleteDocument/:documentId")
+    .delete(protect, deleteDocument)
 
 router.route("/home")
     .get(homepage)

@@ -889,6 +889,27 @@ exports.fetchDocuments = asyncHandler(async(req, res, next) => {
 });
 // ----------------------------------------------------------------------------------
 
+// +++++++++++++++++++++++++++++++     DELETING DOCUMENT   ++++++++++++++++++++++++++++
+
+
+exports.deleteDocument = asyncHandler(async(req, res, next) => {
+    console.log("User Profile Data Reached in Delete Document Backend Function");
+    const documentId = req.params.documentId;
+    // console.log(transactionId);
+
+    const ifDocumentExists = await Document.findOne({ _id: documentId })
+
+    if (!ifDocumentExists) {
+        return res.json("Document ID doesn't exist");
+    }
+    const document = await Document.findByIdAndDelete(documentId);
+    // console.log("Transaction Data");
+    // console.log(transaction);
+    return res.json(document);
+
+
+});
+
 
 // Get token from model , create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
