@@ -35,6 +35,8 @@ const {
     fetchDocuments,
     deleteDocument,
     getSelectedDateTransactions,
+    comparePassword,
+    changePassword,
     homepage
 } = require("../controllers/auth");
 
@@ -141,8 +143,6 @@ router
     .route("/searchTransaction")
     .get(protect, searchTransaction)
 
-
-
 router
     .route("/totalEarningInCategories")
     .get(protect, totalEarningInCategories)
@@ -166,6 +166,14 @@ router
 router
     .route("/getSelectedDateTransactions/:date")
     .get(protect, getSelectedDateTransactions)
+
+router
+    .route("/comparePassword")
+    .post(protect, comparePassword)
+
+router
+    .route("/changePassword")
+    .post(protect, changePassword)
 
 router.route("/home")
     .get(homepage)

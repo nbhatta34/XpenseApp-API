@@ -942,6 +942,73 @@ exports.getSelectedDateTransactions = async(req, res) => {
   }
 }
 // ------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------------------
+
+
+//-------------------------        SEARCH TRANSACTIONS      ------------------------------
+
+exports.searchTransaction = asyncHandler(async(req, res, next) => {
+  // setTimeout(async () => {
+  console.log("Search Transactions Function")
+      // console.log(req.user.id)
+  const getTransaction = await Transaction.find({ userId: req.user.id })
+      // console.log(getTransaction)
+  res.status(200).send(getTransaction)
+      // }, 300);
+});
+// ----------------------------------------------------------------------------------
+//+++++++++++++++++++++++++++++++++++++++++         COMPARE CURRENT USER PASSWORD       +++++++++++++++++++++++++++++++++
+
+exports.comparePassword = asyncHandler(async(req, res, next) => {
+  const { password } = req.body;
+  console.log(password);
+  const id = req.user.id
+
+  if (!password) {
+      return next(new ErrorResponse("Please enter your current password"), 400);
+  }
+
+  // Check User in Database
+  const getPassword = await User.findOne({ userId: id }).select("+password");
+
+  console.log(getPassword["password"]);
+
+  if (getPassword["password"] == password) {
+      console.log("Passwords Matched")
+      res.status(200).send(true)
+  } else {
+      console.log("Passwords Don't Match. Re-type Password")
+      res.send(false)
+  }
+
+});
+// -----------------------------------------------------------------------------------------------------------------------
+//+++++++++++++++++++++++++++++++++++++++++         CHANGE USER PASSWORD       +++++++++++++++++++++++++++++++++
+
+exports.changePassword = asyncHandler(async(req, res, next) => {
+  const { password } = req.body;
+
+  const id = req.user.id
+
+  console.log(id)
+
+  const getPassword = await User.findOne({ userId: id }).select("+password");
+
+  console.log(getPassword)
+
+  if (password == getPassword["password"]) {
+      console.log("You have already used this password. Please enter a new password.")
+      res.send(false);
+
+  } else {
+
+      // Check User in Database
+      const changePass = await User.findByIdAndUpdate({ "_id": id }, { "password": password })
+      res.status(200).send(true)
+  }
+
+});
+// -----------------------------------------------------------------------------------------------------------------------
 
 
 // Get token from model , create cookie and send response
